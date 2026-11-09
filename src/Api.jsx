@@ -1,20 +1,19 @@
 import { useState, useEffect } from 'react';
 
 function Latihan() {
-  const [hotData, setHotData] = useState([]);     // menu panas
-  const [icedData, setIcedData] = useState([]);   // menu dingin
-  const [category, setCategory] = useState('hot'); // tab aktif: 'hot' atau 'iced'
+  const [hotData, setHotData] = useState([]);
+  const [icedData, setIcedData] = useState([]);
+  const [category, setCategory] = useState('hot');
   const [search, setSearch] = useState('');
   const [query, setQuery] = useState('');
+  const [selected, setSelected] = useState(null);   // kopi yang diklik (untuk modal)
 
   useEffect(() => {
     const getData = async () => {
       try {
-        // fetch menu panas
         const hotResp = await fetch('https://api.sampleapis.com/coffee/hot');
         setHotData(await hotResp.json());
 
-        // fetch menu dingin
         const icedResp = await fetch('https://api.sampleapis.com/coffee/iced');
         setIcedData(await icedResp.json());
       } catch (err) {
@@ -24,7 +23,6 @@ function Latihan() {
     getData();
   }, []);
 
-  // pilih sumber data sesuai tab yang aktif
   const data = category === 'hot' ? hotData : icedData;
 
   const filteredData = data.filter(item =>
@@ -41,7 +39,7 @@ function Latihan() {
         Daftar Kopi
       </h1>
 
-      {/* tab pemisah: Hot / Iced */}
+      {/* tab Hot / Iced */}
       <div className="flex justify-center gap-2 my-4">
         <button
           type="button"
@@ -100,9 +98,14 @@ function Latihan() {
         </button>
       </div>
 
+      {/* daftar kopi — kartu sekarang bisa diklik */}
       <div className="grid grid-cols-4 gap-4 p-4">
         {filteredData.map(item => (
-          <div key={item.title} className="bg-white rounded-xl shadow-md overflow-hidden">
+          <div
+            key={item.title}
+            onClick={() => setSelected(item)}
+            className="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all duration-150"
+          >
             {item.image ? (
               <img src={item.image} alt={item.title} className="w-full h-40 object-cover" />
             ) : (
@@ -119,6 +122,55 @@ function Latihan() {
         <p className="text-center text-stone-500 my-8">
           Kopi "{query}" tidak ditemukan.
         </p>
+      )}
+
+      {/* MODAL: muncul saat ada kopi yang diklik */}
+      {selected && (
+        <div
+          onClick={() => setSelected(null)}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden"
+          >
+            {selected.image && (
+              <img
+                src={selected.image}
+                alt={selected.title}
+                className="w-full h-48 object-cover"
+              />
+            )}
+            <div className="p-5">
+              <h2 className="text-xl font-bold text-stone-800 mb-1">
+                {selected.title}
+              </h2>
+              <p className="text-sm text-stone-500 mb-3">Bahan-bahan pembuatan:</p>
+
+              {selected.ingredients && selected.ingredients.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {selected.ingredients.map((bahan, i) => (
+                    <span
+                      key={i}
+                      className="bg-red-50 text-red-700 border border-red-200 rounded-full px-3 py-1 text-sm font-medium"
+                    >
+                      {bahan}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-stone-500 text-sm">Bahan tidak tersedia.</p>
+              )}
+
+              <button
+                onClick={() => setSelected(null)}
+                className="mt-4 w-full bg-stone-800 text-white font-semibold py-2 rounded-lg cursor-pointer hover:bg-stone-700 active:scale-95 transition-all duration-150"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
