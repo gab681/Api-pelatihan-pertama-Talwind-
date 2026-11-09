@@ -6,7 +6,7 @@ function Latihan() {
   const [category, setCategory] = useState('hot');
   const [search, setSearch] = useState('');
   const [query, setQuery] = useState('');
-  const [selected, setSelected] = useState(null);   // kopi yang diklik (untuk modal)
+  const [selected, setSelected] = useState(null);
 
   useEffect(() => {
     const getData = async () => {
@@ -35,12 +35,12 @@ function Latihan() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-center text-red-500">
+      <h1 className="text-2xl md:text-3xl font-bold text-center text-red-500">
         Daftar Kopi
       </h1>
 
       {/* tab Hot / Iced */}
-      <div className="flex justify-center gap-2 my-4">
+      <div className="flex justify-center gap-2 my-4 px-4">
         <button
           type="button"
           onClick={() => setCategory('hot')}
@@ -65,8 +65,8 @@ function Latihan() {
         </button>
       </div>
 
-      {/* area search */}
-      <div className="flex justify-center gap-2 my-6">
+      {/* area search — bertumpuk di HP, berdampingan di layar lebar */}
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-2 my-6 px-4">
         <input
           type="text"
           value={search}
@@ -74,7 +74,7 @@ function Latihan() {
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           placeholder="Cari kopi, lalu klik Search..."
           className="
-            border-2 border-gray-300 rounded-lg px-4 py-2 w-64 cursor-text
+            border-2 border-gray-300 rounded-lg px-4 py-2 w-full sm:w-64 cursor-text
             placeholder:text-stone-400
             focus:outline-none
             focus:border-red-500 focus:bg-red-50 focus:ring-4 focus:ring-red-200
@@ -88,6 +88,7 @@ function Latihan() {
           type="button"
           onClick={handleSearch}
           className="
+            w-full sm:w-auto shrink-0
             bg-red-500 text-white font-semibold px-4 py-2 rounded-lg cursor-pointer
             hover:bg-red-600 hover:shadow-lg hover:-translate-y-0.5
             active:bg-red-700 active:translate-y-0 active:scale-95
@@ -98,8 +99,8 @@ function Latihan() {
         </button>
       </div>
 
-      {/* daftar kopi — kartu sekarang bisa diklik */}
-      <div className="grid grid-cols-4 gap-4 p-4">
+      {/* daftar kopi — jumlah kolom mengikuti lebar layar */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
         {filteredData.map(item => (
           <div
             key={item.title}
@@ -119,12 +120,12 @@ function Latihan() {
       </div>
 
       {filteredData.length === 0 && (
-        <p className="text-center text-stone-500 my-8">
+        <p className="text-center text-stone-500 my-8 px-4">
           Kopi "{query}" tidak ditemukan.
         </p>
       )}
 
-      {/* MODAL: muncul saat ada kopi yang diklik */}
+      {/* modal — lebar menyesuaikan layar */}
       {selected && (
         <div
           onClick={() => setSelected(null)}
@@ -138,7 +139,7 @@ function Latihan() {
               <img
                 src={selected.image}
                 alt={selected.title}
-                className="w-full h-48 object-cover"
+                className="w-full h-40 sm:h-48 object-cover"
               />
             )}
             <div className="p-5">
