@@ -1,23 +1,31 @@
 import { useState, useEffect } from 'react';
 
 function Latihan() {
-  const [data, setData] = useState([]);
+  const [hotData, setHotData] = useState([]);     // menu panas
+  const [icedData, setIcedData] = useState([]);   // menu dingin
+  const [category, setCategory] = useState('hot'); // tab aktif: 'hot' atau 'iced'
   const [search, setSearch] = useState('');
   const [query, setQuery] = useState('');
 
-  const getData = async () => {
-    try {
-      const resp = await fetch('https://api.sampleapis.com/coffee/hot');
-      const json = await resp.json();
-      setData(json);
-    } catch (err) {
-      console.error(err.message);
-    }
-  }
-
   useEffect(() => {
+    const getData = async () => {
+      try {
+        // fetch menu panas
+        const hotResp = await fetch('https://api.sampleapis.com/coffee/hot');
+        setHotData(await hotResp.json());
+
+        // fetch menu dingin
+        const icedResp = await fetch('https://api.sampleapis.com/coffee/iced');
+        setIcedData(await icedResp.json());
+      } catch (err) {
+        console.error(err.message);
+      }
+    };
     getData();
   }, []);
+
+  // pilih sumber data sesuai tab yang aktif
+  const data = category === 'hot' ? hotData : icedData;
 
   const filteredData = data.filter(item =>
     item.title.toLowerCase().includes(query.toLowerCase())
@@ -33,6 +41,33 @@ function Latihan() {
         Daftar Kopi
       </h1>
 
+      {/* tab pemisah: Hot / Iced */}
+      <div className="flex justify-center gap-2 my-4">
+        <button
+          type="button"
+          onClick={() => setCategory('hot')}
+          className={`px-5 py-2 rounded-lg font-semibold cursor-pointer transition-all duration-150 ${
+            category === 'hot'
+              ? 'bg-red-500 text-white shadow-md hover:bg-red-600'
+              : 'bg-white text-stone-700 border border-stone-300 hover:bg-stone-100'
+          }`}
+        >
+          Hot
+        </button>
+        <button
+          type="button"
+          onClick={() => setCategory('iced')}
+          className={`px-5 py-2 rounded-lg font-semibold cursor-pointer transition-all duration-150 ${
+            category === 'iced'
+              ? 'bg-sky-500 text-white shadow-md hover:bg-sky-600'
+              : 'bg-white text-stone-700 border border-stone-300 hover:bg-stone-100'
+          }`}
+        >
+          Iced
+        </button>
+      </div>
+
+      {/* area search */}
       <div className="flex justify-center gap-2 my-6">
         <input
           type="text"
