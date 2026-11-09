@@ -40,7 +40,16 @@ function Latihan() {
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           placeholder="Cari kopi, lalu klik Search..."
-          className="border border-gray-300 rounded-lg px-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-red-400"
+          className="
+            border-2 border-gray-300 rounded-lg px-4 py-2 w-64 cursor-text
+            placeholder:text-stone-400
+            focus:outline-none
+            focus:border-red-500 focus:bg-red-50 focus:ring-4 focus:ring-red-200
+            focus:text-red-900 focus:caret-red-500
+            not-placeholder-shown:border-red-500 not-placeholder-shown:bg-red-50
+            not-placeholder-shown:text-red-900
+            transition-all duration-150
+          "
         />
         <button
           type="button"
